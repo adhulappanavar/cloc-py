@@ -4,7 +4,16 @@ A Python implementation of [cloc](https://github.com/AlDanial/cloc) (Count Lines
 
 ## Overview
 
-cloc-py is a Python port of the original Perl-based cloc tool. It counts blank lines, comment lines, and physical lines of source code in many programming languages.
+cloc-py is a Python port of the original Perl-based cloc tool by Al Danial. It counts blank lines, comment lines, and physical lines of source code in many programming languages.
+
+## Acknowledgments
+
+This project is based on the original [cloc](https://github.com/AlDanial/cloc) tool by **Al Danial** <al.danial@gmail.com>.
+
+- **Original cloc**: Copyright (C) 2006-2025, Al Danial
+- **cloc-py**: Copyright (C) 2024, Anidhula
+
+The original cloc tool has been hosted on GitHub since September 2015 and was previously hosted at http://cloc.sourceforge.net/ since August 2006. It has over 21.5k stars and 1.1k forks, making it one of the most popular code counting tools.
 
 ## Features
 

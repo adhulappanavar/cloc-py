@@ -49,5 +49,11 @@ setup(
         "Bug Reports": "https://github.com/adhulappanavar/cloc-py/issues",
         "Source": "https://github.com/adhulappanavar/cloc-py",
         "Documentation": "https://github.com/adhulappanavar/cloc-py#readme",
+        "Original cloc": "https://github.com/AlDanial/cloc",
     },
+    # Additional metadata for attribution
+    maintainer="Anidhula",
+    maintainer_email="anidhula@gmail.com",
+    # Note: This is based on the original cloc by Al Danial
+    # Original cloc: Copyright (C) 2006-2025, Al Danial <al.danial@gmail.com>
 ) 

@@ -1,7 +1,26 @@
 #!/usr/bin/env python3
 """
 cloc-py -- Count Lines of Code (Python version)
-Based on the original cloc by Al Danial <al.danial@gmail.com>
+Copyright (C) 2024 Anidhula
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+This Python implementation is based on the original cloc tool by Al Danial:
+https://github.com/AlDanial/cloc
+
+Original cloc Copyright (C) 2006-2025, Al Danial <al.danial@gmail.com>
 """
 
 import os
