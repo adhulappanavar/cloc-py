@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 cloc-py -- Count Lines of Code (Python version)
-Copyright (C) 2024 Anidhula
+Copyright (C) 2024 Anil Dhulappanavar
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

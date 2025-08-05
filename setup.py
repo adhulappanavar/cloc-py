@@ -14,8 +14,8 @@ def read_readme():
 setup(
     name="cloc-py",
     version="1.0.0",
-    author="Anidhula",
-    author_email="anidhula@gmail.com",
+    author="Anil Dhulappanavar",
+    author_email="adhula@gmail.com",
     description="Python implementation of cloc (Count Lines of Code)",
     long_description=read_readme(),
     long_description_content_type="text/markdown",
@@ -52,8 +52,8 @@ setup(
         "Original cloc": "https://github.com/AlDanial/cloc",
     },
     # Additional metadata for attribution
-    maintainer="Anidhula",
-    maintainer_email="anidhula@gmail.com",
+    maintainer="Anil Dhulappanavar",
+    maintainer_email="adhula@gmail.com",
     # Note: This is based on the original cloc by Al Danial
     # Original cloc: Copyright (C) 2006-2025, Al Danial <al.danial@gmail.com>
 ) 
