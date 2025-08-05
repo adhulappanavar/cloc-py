@@ -551,17 +551,24 @@ class ClocCounter:
         
         return filtered_lines
     
-    def count_file(self, filepath: str) -> Optional[CountResult]:
+    def count_file(self, filepath: str, verbose: bool = False) -> Optional[CountResult]:
         """Count lines in a single file"""
         if not os.path.exists(filepath):
             return None
         
         if self.is_binary(filepath):
+            if verbose:
+                print(f"      ⏭️  Skipping binary file: {filepath}")
             return None
         
         language = self.detect_language(filepath)
         if language == '(unknown)':
+            if verbose:
+                print(f"      ❓ Unknown language: {filepath}")
             return None
+        
+        if verbose:
+            print(f"      🔍 Analyzing: {filepath} ({language})")
         
         lines = self.read_file(filepath)
         if not lines:
@@ -581,6 +588,9 @@ class ClocCounter:
         # Calculate comment count
         comment_count = total_lines - blank_count - code_count
         
+        if verbose:
+            print(f"      📊 Results: {code_count} code, {comment_count} comment, {blank_count} blank lines")
+        
         return CountResult(
             language=language,
             blank=blank_count,
@@ -589,15 +599,25 @@ class ClocCounter:
             total=total_lines
         )
     
-    def count_directory(self, directory: str, exclude_dirs: Set[str] = None) -> Dict[str, CountResult]:
+    def count_directory(self, directory: str, exclude_dirs: Set[str] = None, verbose: bool = False) -> Dict[str, CountResult]:
         """Count lines in all files in a directory"""
         if exclude_dirs is None:
             exclude_dirs = {'.git', '.svn', '.hg', '__pycache__', 'node_modules', 'vendor'}
         
         results = {}
+        total_files = 0
+        processed_files = 0
         
+        # First pass: count total files
         for root, dirs, files in os.walk(directory):
-            # Skip excluded directories
+            dirs[:] = [d for d in dirs if d not in exclude_dirs]
+            total_files += len(files)
+        
+        if verbose and total_files > 0:
+            print(f"   📁 Found {total_files} files in {directory}")
+        
+        # Second pass: process files
+        for root, dirs, files in os.walk(directory):
             dirs[:] = [d for d in dirs if d not in exclude_dirs]
             
             for file in files:
@@ -605,6 +625,14 @@ class ClocCounter:
                 result = self.count_file(filepath)
                 if result:
                     results[filepath] = result
+                    processed_files += 1
+                    
+                    if verbose and processed_files % 100 == 0:
+                        progress = (processed_files / total_files) * 100
+                        print(f"   📊 Progress: {processed_files}/{total_files} files ({progress:.1f}%)")
+        
+        if verbose and total_files > 0:
+            print(f"   ✅ Processed {processed_files} files from {directory}")
         
         return results
     
@@ -999,6 +1027,7 @@ def main():
     parser.add_argument('--format', choices=['text', 'json', 'csv'], default='text', 
                        help='Output format')
     parser.add_argument('--by-file', action='store_true', help='Show results by file')
+    parser.add_argument('--verbose', '-v', action='store_true', help='Show progress messages')
     parser.add_argument('--version', action='version', version='cloc-py 1.0.0')
     
     args = parser.parse_args()
@@ -1009,16 +1038,55 @@ def main():
     exclude_dirs = set(args.exclude_dir or [])
     exclude_dirs.update({'.git', '.svn', '.hg', '__pycache__', 'node_modules', 'vendor'})
     
+    total_files = 0
+    processed_files = 0
+    skipped_files = 0
+    
+    if args.verbose:
+        print("🔍 Scanning for files...")
+    
+    # First pass: count total files
     for path in args.paths:
         if os.path.isfile(path):
-            result = counter.count_file(path)
+            total_files += 1
+        elif os.path.isdir(path):
+            for root, dirs, files in os.walk(path):
+                dirs[:] = [d for d in dirs if d not in exclude_dirs]
+                total_files += len(files)
+    
+    if args.verbose:
+        print(f"📁 Found {total_files} files to process")
+        print("🚀 Starting analysis...")
+    
+    for path in args.paths:
+        if os.path.isfile(path):
+            if args.verbose:
+                print(f"📄 Processing file: {path}")
+            result = counter.count_file(path, args.verbose)
             if result:
                 all_results[path] = result
+                processed_files += 1
+            else:
+                skipped_files += 1
+                if args.verbose:
+                    print(f"⏭️  Skipped: {path} (unknown language or binary)")
         elif os.path.isdir(path):
-            dir_results = counter.count_directory(path, exclude_dirs)
+            if args.verbose:
+                print(f"📂 Processing directory: {path}")
+            dir_results = counter.count_directory(path, exclude_dirs, args.verbose)
             all_results.update(dir_results)
+            processed_files += len(dir_results)
+            if args.verbose:
+                print(f"✅ Completed directory: {path} ({len(dir_results)} files processed)")
         else:
-            print(f"Warning: {path} does not exist", file=sys.stderr)
+            print(f"⚠️  Warning: {path} does not exist", file=sys.stderr)
+    
+    if args.verbose:
+        print(f"\n📊 Summary:")
+        print(f"   Processed: {processed_files} files")
+        print(f"   Skipped: {skipped_files} files")
+        print(f"   Languages found: {len(set(r.language for r in all_results.values()))}")
+        print("🎯 Generating report...")
     
     if args.by_file:
         # Show results by file
@@ -1029,6 +1097,9 @@ def main():
         # Show aggregated results
         report = counter.generate_report(all_results, args.format)
         print(report)
+    
+    if args.verbose:
+        print("✨ Analysis complete!")
 
 
 if __name__ == '__main__':
